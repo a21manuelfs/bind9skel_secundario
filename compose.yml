@@ -1,0 +1,46 @@
+services:
+  
+  darthvader:
+    build: dnsserver
+    hostname: darthvader
+    dns:
+      - 192.168.20.11
+    networks:
+      rededns:
+          ipv4_address: 192.168.20.10
+    volumes:
+      - ./darthvader/conf/named.conf.options:/etc/bind/named.conf.options
+      - ./darthvader/conf/named.conf.local:/etc/bind/named.conf.local
+      - ./darthvader/conf/db.starwars.lan:/var/cache/bind/db.starwars.lan
+      - ./darthvader/conf/db.192.168.20:/var/cache/bind/db.192.168.20
+      - ./darthvader/conf/named.conf:/etc/bind/named.conf
+
+  dartsidious:
+    build: dnsserver
+    hostname: dartsidious
+    dns:
+      - 192.168.20.10
+
+    networks:
+      rededns:
+          ipv4_address: 192.168.20.11
+    volumes:
+      - ./dartsidious/conf/named.conf.options:/etc/bind/named.conf.options
+      - ./dartsidious/conf/named.conf.local:/etc/bind/named.conf.local
+  eq1:
+    build: debian
+    hostname: eq1
+    dns:
+      - 192.168.20.10
+      - 192.168.20.11
+    networks:
+      rededns:
+          ipv4_address: 192.168.20.100
+
+
+networks:
+  rededns:
+    ipam:
+      config:
+        - subnet: 192.168.20.0/24
+
